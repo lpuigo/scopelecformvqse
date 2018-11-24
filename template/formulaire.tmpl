@@ -1,0 +1,208 @@
+{{define "formulaire"}}{
+"Categories": [
+    {
+        "Key": "default",
+        "Title": "VT CLIENT FTTH",
+        "SubCategories": [
+            {
+                "Title": "Chantier",
+                "Fields": [
+                    {
+                        "Ref": "DOMAINE",
+                        "Type": "singleInput",
+                        "IsMandatory": false,
+                        "IsReadonly": true,
+                        "Label": "Domaine :",
+                        "DefaultValue": {
+                            "Static": "exemple Domaine"
+                        }
+                    },
+                    {
+                        "Ref": "SOUSDOMAINE",
+                        "Type": "singleInput",
+                        "IsMandatory": false,
+                        "IsReadonly": true,
+                        "Label": "Sous-Domaine : ",
+                        "DefaultValue": {
+                            "Static": "exemple Sous-Domaine"
+                        }
+                    },
+                    {
+                        "Ref": "REFCHANTIER",
+                        "Type": "singleInput",
+                        "IsMandatory": false,
+                        "IsReadonly": true,
+                        "Label": "Référence Chantier :",
+                        "DefaultValue": {
+                            "Static": "Exemple réf. Chantier"
+                        }
+                    },
+                    {
+                        "Ref": "TYPECONTROLE",
+                        "Type": "singleChoice",
+                        "IsMandatory": false,
+                        "IsReadonly": false,
+                        "Label": "Type de contrôle :",
+                        "OptionList": [
+                            {
+                                "Choices": [
+                                    {
+                                        "Value": "TC1",
+                                        "Display": "Type contrôle 1"
+                                    },
+                                    {
+                                        "Value": "TC2",
+                                        "Display": "Type contrôle 2"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "Ref": "TYPEINTERVENTION",
+                        "Type": "singleChoice",
+                        "IsMandatory": false,
+                        "IsReadonly": false,
+                        "Label": "Type d'intervention :",
+                        "OptionList": [
+                            {
+                                "Choices": [
+                                    {
+                                        "Value": "TI1",
+                                        "Display": "Type intervention 1"
+                                    },
+                                    {
+                                        "Value": "TI2",
+                                        "Display": "Type intervention 2"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "Ref": "TYPERACCORDEMENT",
+                        "Type": "singleChoice",
+                        "IsMandatory": false,
+                        "IsReadonly": false,
+                        "Label": "Type de raccordement :",
+                        "OptionList": [
+                            {
+                                "Choices": [
+                                    {
+                                        "Value": "TR1",
+                                        "Display": "Type raccordement 1"
+                                    },
+                                    {
+                                        "Value": "TR2",
+                                        "Display": "Type raccordement 2"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "Ref": "OPERATEURIMB",
+                        "Type": "singleChoice",
+                        "IsMandatory": false,
+                        "IsReadonly": false,
+                        "Label": "Opérateur d'immeuble :",
+                        "OptionList": [
+                            {
+                                "Choices": [
+                                    {
+                                        "Value": "Orange",
+                                        "Display": "Orange"
+                                    },
+                                    {
+                                        "Value": "SFR",
+                                        "Display": "SFR"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "Ref": "OPERATEURCOMM",
+                        "Type": "singleChoice",
+                        "IsMandatory": false,
+                        "IsReadonly": false,
+                        "Label": "Opérateur Commercial :",
+                        "OptionList": [
+                            {
+                                "Choices": [
+                                    {
+                                    "Value": "Orange",
+                                    "Display": "Orange"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "Ref": "AdresseVT",
+                        "Type": "address",
+                        "IsMandatory": true,
+                        "IsReadonly": false,
+                        "Label": "Adresse"
+                    }
+                ]
+            },
+            {
+                "Title": "Controles à réaliser",
+                "Fields": [{{template "controlchoice" .Controls}}
+                ]
+            },
+            {
+                "Title": "Controles choisis",
+                "Fields": [{{template "controllist" .Controls}}
+                ]
+            },
+            {
+                "Title": "Bilan",
+                "Fields": [
+                    {
+                        "Ref": "CONCLUSION",
+                        "Type": "singleChoice",
+                        "IsMandatory": true,
+                        "IsReadonly": false,
+                        "Label": "Conclusion :",
+                        "IsMandatoryExpr": "test",
+                        "MessErrRequired": "Il faut renseigner la conclusion",
+                        "OptionList": [
+                            {
+                            "Choices": [
+                                {
+                                    "Value": "",
+                                    "Display": "-"
+                                },
+                                {
+                                    "Value": "OK",
+                                    "Display": "Conforme"
+                                },
+                                {
+                                    "Value": "KO",
+                                    "Display": "Non conforme sans reprise"
+                                },
+                                {
+                                    "Value": "KOR",
+                                    "Display": "Non conforme avec reprise"
+                                }
+                            ]
+                            }
+                        ]
+                    },
+                    {
+                        "Ref": "SIGNCONTROLER",
+                        "Type": "signatureInput",
+                        "IsMandatory": true,
+                        "IsReadonly": false,
+                        "Label": "Signature Controleur"
+                    }
+                ]
+            }
+        ]
+    }
+],
+"ValidationRules": []
+}
+{{end}}

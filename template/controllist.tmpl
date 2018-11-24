@@ -1,0 +1,40 @@
+{{define "controllist"}}{{ $n1 := len .}}{{range $i1, $e1 := .}}{{ $parentRef := .Ref}}{{ $parentLabel := .Label}}{{ $n2 := len .Items}}{{range $i2, $e2 := .Items}}                    {
+                        "Ref": "{{.Ref}}",
+                        "Type": "singleChoice",
+                        "IsMandatory": false,
+                        "IsReadonly": false,
+                        "Label": "{{.Label}}",
+                        "Tooltip": "{{.Tooltip}}",
+                        "SectionTitle": "{{$parentLabel}}",
+                        "Visibility": "[{{$parentRef}}] == true",
+                        "OptionList": [
+                            {
+                                "Choices": [
+                                    {
+                                        "Value": "",
+                                        "Display": "Non Vérifié"
+                                    },
+                                    {
+                                        "Value": "OK",
+                                        "Display": "Conforme"
+                                    },
+                                    {
+                                        "Value": "KO",
+                                        "Display": "Non conforme"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "Ref": "{{.Ref}}_Comment",
+                        "Type": "singleInput",
+                        "IsMandatory": true,
+                        "IsReadonly": false,
+                        "Label": "Commentaire non conformité :",
+                        "MessErrRequired": "Un commentaire sur la non conformité est obligatoire",
+                        "Visibility": "[{{$parentRef}}] == true && [{{.Ref}}] == 'KO'"
+                    }{{if lt (plus1 $i2) $n2}},
+{{else if lt (plus1 $i1) $n1}},
+{{end}}
+{{end}}{{end}}{{end}}
