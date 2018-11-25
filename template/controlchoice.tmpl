@@ -3,7 +3,8 @@
                         "Type": "booleanInput",
                         "IsMandatory": false,
                         "IsReadonly": false,
-                        "Label": "{{.Label}}"
-                    }{{if lt (plus1 $i) $n}},
+                        "Label": "{{.Label}}",
+{{if .Section}}                        "SectionTitle": "{{.Section}}",
+{{end}}                    }{{if lt (plus1 $i) $n}},
 {{end}}
 {{end}}{{end}}

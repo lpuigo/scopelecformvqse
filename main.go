@@ -72,7 +72,7 @@ func loadControlFromCSV(file string) (c model.Control, err error) {
 	}
 
 	var (
-		//colCtrl    = cols[0]
+		colSection = cols[0]
 		colCtrlGrp = cols[1]
 		colItem    = cols[2]
 		colAide1   = cols[3]
@@ -81,6 +81,7 @@ func loadControlFromCSV(file string) (c model.Control, err error) {
 		ctrlGrp        = model.ControlGroup{}
 		curCtrlGrpName = ""
 		ctrlGrpName    = ""
+		sectionName    = ""
 	)
 
 	for i, r := range rs.GetRecords() {
@@ -94,13 +95,17 @@ func loadControlFromCSV(file string) (c model.Control, err error) {
 				Ref:   ctrlGrpName,
 				Label: curCtrlGrpName,
 			}
+			if r[colSection] != sectionName {
+				sectionName = r[colSection]
+				ctrlGrp.Section = sectionName
+			}
 		}
 		ctrlGrp.Items = append(
 			ctrlGrp.Items,
 			model.Item{
 				Ref:     fmt.Sprintf("%s_%d", ctrlGrpName, len(ctrlGrp.Items)+1),
 				Label:   r[colItem],
-				Tooltip: fmt.Sprintf("%s. %s.", r[colAide1], r[colAide2]),
+				Tooltip: secureJson(fmt.Sprintf("%s. %s.", r[colAide1], r[colAide2])),
 			},
 		)
 	}
@@ -110,4 +115,8 @@ func loadControlFromCSV(file string) (c model.Control, err error) {
 
 func convertToRef(s string) string {
 	return strings.Replace(strings.Title(strings.ToLower(s)), " ", "", -1)
+}
+
+func secureJson(s string) string {
+	return strings.Replace(s, "\"", "\\\"", -1)
 }

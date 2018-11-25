@@ -5,8 +5,8 @@
                         "IsReadonly": false,
                         "Label": "{{.Label}}",
                         "Tooltip": "{{.Tooltip}}",
-                        "SectionTitle": "{{$parentLabel}}",
-                        "Visibility": "[{{$parentRef}}] == true",
+{{if eq $i2 0}}                        "SectionTitle": "{{$parentLabel}}",
+{{end}}                        "Visibility": "[{{$parentRef}}] == true",
                         "OptionList": [
                             {
                                 "Choices": [
@@ -36,5 +36,4 @@
                         "Visibility": "[{{$parentRef}}] == true && [{{.Ref}}] == 'KO'"
                     }{{if lt (plus1 $i2) $n2}},
 {{else if lt (plus1 $i1) $n1}},
-{{end}}
-{{end}}{{end}}{{end}}
+{{end}}{{end}}{{end}}{{end}}
