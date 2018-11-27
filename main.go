@@ -15,36 +15,64 @@ import (
 
 const (
 	templateDir string = "./template"
-	ctrlFile           = `C:\Users\Laurent\Golang\src\github.com\lpuig\scopelecformvqse\test\client_ftth.csv`
+	ctrlFile           = `C:\Users\Laurent\Golang\src\github.com\lpuig\scopelecformvqse\test\FTTH_CLIENT.csv`
+	ctrlDir            = `C:\Users\Laurent\Golang\src\github.com\lpuig\scopelecformvqse\test`
 )
 
-func outfile(infile string) string {
-	return strings.TrimSuffix(infile, filepath.Ext(infile)) + ".json"
+func main() {
+	converter := NewConverter()
+
+	files, err := filepath.Glob(filepath.Join(ctrlDir, "*.csv"))
+	if err != nil {
+		log.Fatalf("could not scan directory: %v", err)
+	}
+
+	for _, file := range files {
+		err := converter.Convert(file)
+		if err != nil {
+			log.Printf("could not convert '%s': %v", filepath.Base(file), err)
+		}
+	}
 }
 
-func main() {
+type Converter struct {
+	*template.Template
+}
+
+func NewConverter() Converter {
+	c := Converter{}
+
 	// pattern is the glob pattern used to find all the template files.
 	pattern := filepath.Join(templateDir, "*.tmpl")
 
 	// Load the drivers.
 	fns := template.FuncMap{"plus1": func(x int) int { return x + 1 }}
-	tmpls := template.Must(template.New("abc").Funcs(fns).ParseGlob(pattern))
+	c.Template = template.Must(template.New("abc").Funcs(fns).ParseGlob(pattern))
 
-	ctrl, err := loadControlFromCSV(ctrlFile)
+	return c
+}
+
+func (c Converter) Convert(file string) error {
+	ctrl, err := loadControlFromCSV(file)
 	if err != nil {
-		log.Fatalf("could not load Control CSV File: %s", err)
+		return fmt.Errorf("could not load Control CSV File: %s", err)
 	}
 
-	of, err := os.Create(outfile(ctrlFile))
+	of, err := os.Create(outfile(file))
 	if err != nil {
-		log.Fatalf("could not create result File: %s", err)
+		return fmt.Errorf("could not create result File: %s", err)
 	}
 	defer of.Close()
 
-	err = tmpls.ExecuteTemplate(of, "formulaire", ctrl)
+	err = c.ExecuteTemplate(of, "formulaire", ctrl)
 	if err != nil {
-		log.Fatalf("template execution: %s", err)
+		return fmt.Errorf("template execution: %s", err)
 	}
+	return nil
+}
+
+func outfile(infile string) string {
+	return strings.TrimSuffix(infile, filepath.Ext(infile)) + ".json"
 }
 
 func loadControlFromCSV(file string) (c model.Control, err error) {
@@ -66,6 +94,9 @@ func loadControlFromCSV(file string) (c model.Control, err error) {
 		"POINT DE CONTROLE",
 		"AIDE EN LIGNE",
 		"AIDE SEUIL DE NON-CONFORMITE",
+		"POIDS",
+		"PRIX",
+		"POURCENTAGE",
 	)
 	if err != nil {
 		return
@@ -77,6 +108,9 @@ func loadControlFromCSV(file string) (c model.Control, err error) {
 		colItem    = cols[2]
 		colAide1   = cols[3]
 		colAide2   = cols[4]
+		colPoids   = cols[5]
+		colPrix    = cols[6]
+		colPct     = cols[7]
 
 		ctrlGrp        = model.ControlGroup{}
 		curCtrlGrpName = ""
@@ -104,7 +138,7 @@ func loadControlFromCSV(file string) (c model.Control, err error) {
 			ctrlGrp.Items,
 			model.Item{
 				Ref:     fmt.Sprintf("%s_%d", ctrlGrpName, len(ctrlGrp.Items)+1),
-				Label:   r[colItem],
+				Label:   composeItemLabel(r[colItem], r[colPoids], r[colPrix], r[colPct]),
 				Tooltip: secureJson(fmt.Sprintf("%s. %s.", r[colAide1], r[colAide2])),
 			},
 		)
@@ -119,4 +153,17 @@ func convertToRef(s string) string {
 
 func secureJson(s string) string {
 	return strings.Replace(s, "\"", "\\\"", -1)
+}
+
+func composeItemLabel(titre, poids, prix, pct string) string {
+	switch {
+	case poids != "":
+		return fmt.Sprintf("%s (Poids: %s)", titre, poids)
+	case prix != "":
+		return fmt.Sprintf("%s (%s€)", titre, prix)
+	case pct != "":
+		return fmt.Sprintf("%s (%s%%)", titre, pct)
+	default:
+		return titre
+	}
 }

@@ -1,10 +1,9 @@
 {{define "controlchoice"}}{{$n := len .}}{{range $i, $e := .}}                    {
-                        "Ref": "{{.Ref}}",
+{{if .Section}}                        "SectionTitle": "{{.Section}}",
+{{end}}                        "Ref": "{{.Ref}}",
                         "Type": "booleanInput",
                         "IsMandatory": false,
                         "IsReadonly": false,
-                        "Label": "{{.Label}}",
-{{if .Section}}                        "SectionTitle": "{{.Section}}",
-{{end}}                    }{{if lt (plus1 $i) $n}},
-{{end}}
-{{end}}{{end}}
+                        "Label": "{{.Label}}"
+                    }{{if lt (plus1 $i) $n}},
+{{end}}{{end}}{{end}}
